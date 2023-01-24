@@ -122,7 +122,7 @@ class SparCA(BaseEstimator, TransformerMixin):
             else:
                 self.clusters_[l]['header'] = [X_scale.columns[i]]
         
-        cluster_fit_fn = lambda c: (c, _fit_cluster(c, self.clusters_, X_scale, self.n_jobs, self.r2_threshold))
+        cluster_fit_fn = lambda c: (c, _fit_cluster(c, self.clusters_, X_scale, self.r2_threshold))
         
         if self.n_jobs is not None and self.n_jobs > 1:
             cluster_fit_results = Parallel(n_jobs = self.n_jobs)(delayed(cluster_fit_fn)(c) for c in self.clusters_)
