@@ -169,3 +169,5 @@ class SparCA(BaseEstimator, TransformerMixin):
             pretty_string = self._cluster_pretty_string(self.clusters_[c])
             cluster_text = f'Cluster {c} report:\n' + pretty_string
             cluster_reports.append(cluster_text)
+
+        return cluster_reports
