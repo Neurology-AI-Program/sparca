@@ -24,4 +24,4 @@ def horn_selection(X, n_samples = 1):
 
     e_gt_s = (eig_E > eig_S.mean(axis = 0)).astype('int')
 
-    return np.argmax(np.roll(e_gt_s, 1) - e_gt_s)
+    return np.max([np.argmax(np.roll(e_gt_s, 1) - e_gt_s), 1])
