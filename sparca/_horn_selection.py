@@ -1,6 +1,26 @@
 import numpy as np
 
-def horn_selection(X, n_samples = 1):
+def horn_selection(X: np.ndarray, n_samples: int = 1) -> int:
+
+    """
+    Function for performing Horn's parallel analysis [1] method for estimating a good choice for the number of
+    components to use for PCA decomposition of X.
+
+    [1] J. L. Horn, "A rationale and test for the number of factors in factor analysis", 
+    Psychometrika 1965 Vol. 30 Issue 2 Pages 179-185
+
+    Parameters
+    ----------
+    X: numpy.ndarray
+        2d array representing the design matrix
+    n_samples: int
+        integer number of resamples used to estimate threshold (default 1)
+    
+    Returns
+    -------
+    h: int
+        Estimated number of components
+    """
     
     n_s, n_f = X.shape
 
@@ -24,4 +44,4 @@ def horn_selection(X, n_samples = 1):
 
     e_gt_s = (eig_E > eig_S.mean(axis = 0)).astype('int')
 
-    return np.max([np.argmax(np.roll(e_gt_s, 1) - e_gt_s), 1])
+    return np.max([np.argmax(np.roll(e_gt_s, 1) - e_gt_s), 1]).astype('int')

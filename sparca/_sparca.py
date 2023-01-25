@@ -57,8 +57,43 @@ def _fit_cluster(c, clusters, X, r2_threshold):
 
 
 class SparCA(BaseEstimator, TransformerMixin):
+    """
+    Scikit-learn style estimator for sparse compressed agglomeration transformation.
 
-    def __init__(self, n_clusters, cluster_model = None, n_jobs = None, r2_threshold = 0.95):
+    Parameters:
+    -----------
+    n_clusters: int
+        integer specifying the number of clusters for grouping features
+    cluster_model: sklearn.cluster.FeatureAgglomeration
+        fitted FeatureAgglomeration instance (default None).  Useful if you want
+        to use a previously established cluster model.
+    n_jobs: int
+        number of parallel tasks used to fit the cluster models (default None)
+    r2_threshold: float
+        threshold for signal recovery of each compressed component  (default 0.95)
+
+    Attributes:
+    -----------
+    pre_scale: sklearn.preprocessing.StandardScaler
+        Scaling model used to condition the input data
+    agg: sklearn.cluster.FeatureAgglomeration
+        FeatureAgglomeration model representing the feature clusters
+    cluster_model_is_fitted: Bool
+        Flag indicating whether self.agg is fitted
+    clusters_: dict
+        Dictionary of feature cluster information
+    n_raw_fetures_: int
+        Number of input features seen during fit
+    n_compressed_features_: int
+        Number of reduced features
+    """
+
+    def __init__(self, 
+        n_clusters: int, 
+        cluster_model: FeatureAgglomeration = None,
+        n_jobs: int = None, 
+        r2_threshold: float = 0.95
+    ):
 
         self.pre_scale = StandardScaler()
 
@@ -106,7 +141,15 @@ class SparCA(BaseEstimator, TransformerMixin):
         return pretty_string
 
     
-    def fit(self, X):
+    def fit(self, X: pd.DataFrame):
+        """
+        Fit the model using design dataframe X
+
+        Parameters:
+        -----------
+        X: pandas.DataFrame
+            DataFrame representing design matrix of raw input features
+        """
         
         self.n_raw_features_ = X.shape[1]
         self.n_compressed_features_ = 0
@@ -137,7 +180,22 @@ class SparCA(BaseEstimator, TransformerMixin):
             self.n_compressed_features_ += n_compressed_features
 
 
-    def transform(self, X, cluster_ids = None):
+    def transform(self, X: pd.DataFrame, cluster_ids: list = None):
+        """
+        Transform raw design matrix X into reduced feature space
+
+        Parameters:
+        -----------
+        X: pandas.DataFrame
+            DataFrame representing design matrix of raw input features
+        cluster_ids: List[int]
+            Optional subset of cluster IDs to use in the transformation. None means use all clusters (default None)
+
+        Returns:
+        ---------
+        X_sparca: pandas.DataFrame
+            DataFrame of compressed features
+        """
         
         X_scale = self._scale_dataframe(X)
         
@@ -157,7 +215,21 @@ class SparCA(BaseEstimator, TransformerMixin):
         return pd.DataFrame(np.column_stack(col_stack), columns = columns, index = X.index)
 
 
-    def cluster_reports(self, cluster_ids = None):
+    def cluster_reports(self, cluster_ids: list = None):
+        """
+        Produce readable summaries of each cluster
+
+        Parameters:
+        -----------
+        cluster_ids: List[int]
+            Subset of clusters to get reports.  None means get reports for all clusters (default None)
+
+        Returns:
+        --------
+        cluster_reports: List[str]
+            List of formatted reports for each cluster, describing the input features and sparse representations
+
+        """
         
         if cluster_ids is None:
             cluster_ids = range(len(self.clusters_))
