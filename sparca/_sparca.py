@@ -44,7 +44,7 @@ def _fit_cluster(c, clusters, X, r2_threshold):
     if n_features > 1:
         h = horn_selection(X_cluster)
         n_compressed_features += h
-        pca_cluster = PCA(n_components = h)
+        pca_cluster = PCA(n_components = h, whiten = True)
         X_pca = pca_cluster.fit_transform(X_cluster)
     else:
         n_compressed_features += 1
