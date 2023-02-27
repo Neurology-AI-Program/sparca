@@ -15,6 +15,7 @@ pip install git+https://github.com/Neurology-AI-Program/sparca.git
 For testing purposes,
 a small dataset sourced from the UCI repository is provided with this library.  It can be loaded with<br>
  ```
+ from sparca import load_test_data, SparCA
  df, info = load_test_data()
  ```
  When initializing a SparCA model, the only required parameter is the number of clusters used for grouping features<br>
